@@ -8,8 +8,8 @@
 
   tasks:
 
-    - name: Get all hosts in inventory
-      ansible.controller.host_info:
+    - name: Get hosts from inventory
+      ansible.controller.host_list:
         inventory: "{{ inventory_name }}"
       register: host_list
 
