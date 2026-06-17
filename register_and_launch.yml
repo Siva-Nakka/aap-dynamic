@@ -1,0 +1,24 @@
+---
+- name: Register host and launch job
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    inventory_name: Dynamic_Inventory
+    target_job_template: Linux Patch Job
+
+  tasks:
+
+    - name: Create host
+      ansible.controller.host:
+        inventory: "{{ inventory_name }}"
+        name: "{{ target_ip }}"
+        variables:
+          ansible_host: "{{ target_ip }}"
+        state: present
+
+    - name: Launch patch job
+      ansible.controller.job_launch:
+        name: "{{ target_job_template }}"
+        limit: "{{ target_ip }}"
+        wait: false
