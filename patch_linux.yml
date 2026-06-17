@@ -1,0 +1,12 @@
+---
+- name: Patch Linux Server
+  hosts: all
+  gather_facts: false
+
+  tasks:
+
+    - name: Test connectivity
+      ping:
+
+    - name: Display hostname
+      command: hostname
