@@ -16,9 +16,3 @@
         variables:
           ansible_host: "{{ target_ip }}"
         state: present
-
-    - name: Launch patch job
-      ansible.controller.job_launch:
-        name: "{{ target_job_template }}"
-        limit: "{{ target_ip }}"
-        wait: false
