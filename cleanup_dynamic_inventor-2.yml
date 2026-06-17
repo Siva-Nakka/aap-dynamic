@@ -1,0 +1,32 @@
+---
+- name: Cleanup Dynamic Inventory
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    inventory_name: Dynamic_Inventory
+
+  tasks:
+
+    - name: Fetch hosts from inventory via API
+      ansible.controller.api:
+        endpoint: "/api/controller/v2/hosts/?inventory__name={{ inventory_name }}"
+        method: GET
+      register: host_result
+
+    - name: Filter only dynamic hosts
+      set_fact:
+        cleanup_hosts: >-
+          {{
+            host_result.json.results
+            | selectattr('variables.dynamic_cleanup', 'defined')
+            | selectattr('variables.dynamic_cleanup', 'equalto', true)
+            | list
+          }}
+
+    - name: Delete dynamic hosts
+      ansible.controller.host:
+        inventory: "{{ inventory_name }}"
+        name: "{{ item.name }}"
+        state: absent
+      loop: "{{ cleanup_hosts }}"
