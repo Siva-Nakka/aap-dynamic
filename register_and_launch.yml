@@ -8,7 +8,14 @@
     target_job_template: Linux Patch Job
 
   tasks:
+    - name: To print the targetIP
+      ansible.builtin.debug:
+        var: target_ip
 
+    - name: To print the inventory name
+      ansible.builtin.debug:
+        var: inventory_name
+    
     - name: Create host
       ansible.controller.host:
         inventory: "{{ inventory_name }}"
