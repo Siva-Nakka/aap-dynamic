@@ -24,6 +24,7 @@
         name: "{{ item.name }}"
         inventory: "{{ target_inventory }}"
         state: absent
+        request_timeout: 30
       loop: "{{ existing_hosts }}"
       loop_control:
         label: "{{ item.name }}"
