@@ -13,7 +13,7 @@
         existing_hosts: >-
           {{ query('ansible.controller.controller_api',
                     'hosts',
-                    query_params={'inventory__name': target_inventory, 'page_size': 200}) }}
+                    query_params={'inventory__name': target_inventory, 'page_size': 200},  request_timeout=30) }}
 
     - name: Report what is about to be removed
       ansible.builtin.debug:
