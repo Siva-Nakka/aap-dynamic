@@ -13,8 +13,9 @@
         existing_hosts: >-
           {{ query('ansible.controller.controller_api',
                     'hosts',
-                    query_params={'inventory__name': target_inventory, 'page_size': 200},  request_timeout=30) }}
-
+                    query_params={'inventory__name': target_inventory, 'page_size': 200},
+                    request_timeout=30) }}
+       
     - name: Report what is about to be removed
       ansible.builtin.debug:
         msg: "{{ existing_hosts | length }} host(s) found in '{{ target_inventory }}' - removing them all"
@@ -28,7 +29,21 @@
       loop: "{{ existing_hosts }}"
       loop_control:
         label: "{{ item.name }}"
+      register: delete_result
       ignore_errors: true
+
+    - name: Show the actual reason for any failures
+      ansible.builtin.debug:
+        msg: "{{ item.item.name }}: {{ item.msg | default('unknown error') }}"
+      loop: "{{ delete_result.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+      when: item is failed
+
+    - name: Fail the play if any host could not be removed
+      ansible.builtin.fail:
+        msg: "These hosts could not be removed: {{ delete_result.results | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item.name') | list }}"
+      when: delete_result.results | selectattr('failed', 'defined') | selectattr('failed') | list | length > 0
 
     - name: Confirm the inventory is now empty
       ansible.builtin.debug:
