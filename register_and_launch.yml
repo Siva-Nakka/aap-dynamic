@@ -25,8 +25,3 @@
         state: present
         request_timeout: 30
 
-    - name: Store host for cleanup
-      set_stats:
-        data:
-          cleanup_hosts:
-            - "{{ target_ip }}"
